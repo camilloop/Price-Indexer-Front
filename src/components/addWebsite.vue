@@ -7,19 +7,22 @@
       <form>
         <div class="form-row">
           <div class="form-group col-md-3">
-            <input class="form-control mr-sm-2" type="url" size="40" placeholder="Website URL" aria-label="Website URL" required>
-          </div>
-          <div class="form-group col-md-3">
-            <input class="form-control mr-sm-2" type="text" placeholder="Name pattern" aria-label="Name pattern" required>
-          </div>
-          <div class="form-group col-md-3">
-            <input class="form-control mr-sm-2" type="text" placeholder="Price pattern" aria-label="Price pattern" required>
+            <input class="form-control mr-sm-2" type="url" size="40" placeholder="Website URL" aria-label="Website URL" v-model="website.url" required>
           </div>
           <div class="form-group col-md-2">
-            <input class="form-control mr-sm-2" type="number" min="0" step="1" placeholder="Max depth" aria-label="Max depth" required>
+            <input class="form-control mr-sm-2" type="text" placeholder="Website name" aria-label="Website name" v-model="website.name" required>
+          </div>
+          <div class="form-group col-md-2">
+            <input class="form-control mr-sm-2" type="text" placeholder="Name pattern" aria-label="Name pattern" v-model="website.namePattern" required>
+          </div>
+          <div class="form-group col-md-2">
+            <input class="form-control mr-sm-2" type="text" placeholder="Price pattern" aria-label="Price pattern" v-model="website.pricePattern" required>
+          </div>
+          <div class="form-group col-md-2">
+            <input class="form-control mr-sm-2" type="number" min="0" step="1" placeholder="Max depth" aria-label="Max depth" v-model="website.maxDepth" required>
           </div>
           <div class="form-group col-md-1">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" v-on:click.prevent="post">Add</button>
           </div>
         </div>
       </form>
@@ -31,6 +34,7 @@
         <thead class="thead-dark">
         <tr>
           <th scope="col">Website URL</th>
+          <th scope="col">Name</th>
           <th scope="col">Name pattern</th>
           <th scope="col">Price pattern</th>
           <th scope="col">Depth</th>
@@ -38,28 +42,15 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <th scope="row" class="align-middle">http://wp.pl</th>
-          <td class="align-middle">h1.product__header__name</td>
-          <td class="align-middle">p.product__data__price__regular</td>
-          <td class="align-middle">2</td>
+        <tr v-for="singleWebsite in websites">
+          <th scope="row" class="align-middle">{{ singleWebsite.url }}</th>
+          <td class="align-middle">{{ singleWebsite.name }}</td>
+          <td class="align-middle">{{ singleWebsite.namePattern }}</td>
+          <td class="align-middle">{{ singleWebsite.pricePattern }}</td>
+          <td class="align-middle">{{ singleWebsite.maxDepth }}</td>
           <td class="align-middle">
-            <button type="button" class="btn btn-outline-danger">Delete</button>
+            <button type="button" class="btn btn-outline-danger" v-on:click="deleteWebsite(singleWebsite.name)">Delete</button>
           </td>
-        </tr>
-        <tr>
-          <th scope="row">http://distripark.pl</th>
-          <td>div.product_info_name</td>
-          <td>#projector_price_value</td>
-          <td>5</td>
-          <td>delete</td>
-        </tr>
-        <tr>
-          <th scope="row">http://spidersweb.pl</th>
-          <td>#nazwa</td>
-          <td>#cena</td>
-          <td>3</td>
-          <td>delete</td>
         </tr>
         </tbody>
       </table>
@@ -68,7 +59,44 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      website: {
+        url: "",
+        name: "",
+        namePattern: "",
+        pricePattern: "",
+        maxDepth: ""
+      },
+      websites: []
+    }
+  },
+  methods: {
+    post: function(){
+      this.$http.post('http://localhost:8080/api/websites', this.website)
+        .then(function(data){
+          this.website.url = this.website.name = this.website.namePattern = this.website.pricePattern = this.website.maxDepth = "";
+          this.getWebsites();
+          }, function (data) {
+          console.log("obsłużyć błąd");
+        })
+    },
+    getWebsites: function () {
+      this.$http.get('http://localhost:8080/api/websites').then(function (data) {
+        this.websites = data.body.content;
+      });
+    },
+    deleteWebsite: function (name) {
+      this.$http.delete('http://localhost:8080/api/websites/' + name).then(function () {
+        this.getWebsites();
+      })
+    }
+  },
+  created() {
+    this.getWebsites();
+  }
+}
 </script>
 
 <style>
