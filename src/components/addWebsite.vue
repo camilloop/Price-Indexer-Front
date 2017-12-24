@@ -42,7 +42,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="singleWebsite in websites">
+        <tr v-for="singleWebsite in filteredWebsites">
           <th scope="row" class="align-middle">{{ singleWebsite.url }}</th>
           <td class="align-middle">{{ singleWebsite.name }}</td>
           <td class="align-middle">{{ singleWebsite.namePattern }}</td>
@@ -95,6 +95,13 @@ export default {
   },
   created() {
     this.getWebsites();
+  },
+  computed: {
+    filteredWebsites: function () {
+      return this.websites.filter((singleWebsite) => {
+        return singleWebsite.url.match(this.website.url);
+      });
+    }
   }
 }
 </script>
