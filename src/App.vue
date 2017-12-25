@@ -1,5 +1,6 @@
 <template>
   <div>
+    <notifications position="top right"/>
     <app-header></app-header>
     <router-view></router-view>
     <app-footer></app-footer>

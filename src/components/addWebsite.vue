@@ -60,6 +60,7 @@
 
 <script>
 import Website from '../api/Website';
+import notificationMixin from '../mixins/notificationMixin';
 
 export default {
   data() {
@@ -78,20 +79,26 @@ export default {
     post: function(){
       Website.add(this.website)
         .then(res => {
+          this.addSuccessMessage(this.website.name + ' website added successfully.');
           this.website.url = this.website.name = this.website.namePattern = this.website.pricePattern = this.website.maxDepth = "";
           this.getWebsites();
           }, res => {
-          console.log("obsłużyć błąd");
+          this.addErrorMessage();
         })
     },
     getWebsites: function () {
       Website.getAll().then(res => {
         this.websites = res.body.content;
-      });
+      }, res => {
+        this.addErrorMessage();
+      })
     },
     deleteWebsite: function (name) {
       Website.delete(name).then(res => {
+        this.addSuccessMessage(name + ' website deleted successfully.');
         this.getWebsites();
+      }, res => {
+        this.addErrorMessage();
       })
     }
   },
@@ -104,7 +111,8 @@ export default {
         return singleWebsite.url.match(this.website.url);
       });
     }
-  }
+  },
+  mixins: [notificationMixin]
 }
 </script>
 
