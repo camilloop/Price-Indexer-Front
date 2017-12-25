@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import Website from '../api/Website';
+
 export default {
   data() {
     return {
@@ -74,21 +76,21 @@ export default {
   },
   methods: {
     post: function(){
-      this.$http.post('http://localhost:8080/api/websites', this.website)
-        .then(function(data){
+      Website.add(this.website)
+        .then(res => {
           this.website.url = this.website.name = this.website.namePattern = this.website.pricePattern = this.website.maxDepth = "";
           this.getWebsites();
-          }, function (data) {
+          }, res => {
           console.log("obsłużyć błąd");
         })
     },
     getWebsites: function () {
-      this.$http.get('http://localhost:8080/api/websites').then(function (data) {
-        this.websites = data.body.content;
+      Website.getAll().then(res => {
+        this.websites = res.body.content;
       });
     },
     deleteWebsite: function (name) {
-      this.$http.delete('http://localhost:8080/api/websites/' + name).then(function () {
+      Website.delete(name).then(res => {
         this.getWebsites();
       })
     }
