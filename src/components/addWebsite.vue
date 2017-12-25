@@ -108,7 +108,7 @@ export default {
   computed: {
     filteredWebsites: function () {
       return this.websites.filter((singleWebsite) => {
-        return singleWebsite.url.match(this.website.url);
+        return singleWebsite.name.match(this.website.name);
       });
     }
   },
