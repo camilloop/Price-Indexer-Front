@@ -29,7 +29,7 @@
     </div>
 
     <div class="container mt-4">
-      <h2>Section title</h2>
+      <h2>Websites list</h2>
       <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
